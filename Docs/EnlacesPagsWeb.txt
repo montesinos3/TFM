@@ -1,0 +1,9 @@
+Papers/Información/PDFs
+
+- https://patrick-knab.github.io/which-lime-to-trust/
+- https://arxiv.org/html/2503.24365v1
+- https://www.mdpi.com/2227-7390/13/20/3355
+
+Proyectos
+
+- https://github.com/marcotcr/lime-experiments
