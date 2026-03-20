@@ -6,8 +6,8 @@ Hasta ahora he conseguido lo siguiente:
 - Hacer esto mismo para N instancias diferentes.
 
 Como siguientes pasos a realizar serían:
-- Fuzzificar el dominio de las variables (MUY ALTO, ALTO, MEDIO, BAJO, MUY BAJO)
 - Usar este concepto para hacerlo con todo el conjunto de test de modo que tengamos las reglas globales que usaremos como predictor en lugar de la regresión lineal de LIME
+- Fuzzificar el dominio de las variables (MUY ALTO, ALTO, MEDIO, BAJO, MUY BAJO)
 - Fuzzificar dichas reglas y generar un Sistema de Inferencia Difuso (FIS)
 - Usar esas reglas para predecir el valor y explicar dicha predicción
 - Modificar el código fuente de LIME sustituyendo la función de predicción de regresión lineal por nuestro método de obtención y aplicación de reglas
