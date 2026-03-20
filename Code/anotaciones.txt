@@ -1,0 +1,13 @@
+Hasta ahora he conseguido lo siguiente:
+- Entrenar Random Forest con mi dataset sintético
+- Aplicar LIME a una instancia concreta y ver su explicación
+- Aplicar LIME-SP para hacer explicaciones de todo el conjunto de test para obtener las 5 explicaciones lo más diversas posibles para tener explicaciones de distintas partes del polinomio
+- Usar un wrapper para pasárselo a LIME de modo que obtenemos los puntos sintéticos generados por LIME (ignorando las explicaciones que genera) y aplicarlo a una sola instancia para comprobar que reglas se generan a partir de un árbol de decisión entrenado con el dataset generado por los puntos anteriores y las salidas de la prediccion de Random Forest.
+- Hacer esto mismo para N instancias diferentes.
+
+Como siguientes pasos a realizar serían:
+- Fuzzificar el dominio de las variables (MUY ALTO, ALTO, MEDIO, BAJO, MUY BAJO)
+- Usar este concepto para hacerlo con todo el conjunto de test de modo que tengamos las reglas globales que usaremos como predictor en lugar de la regresión lineal de LIME
+- Fuzzificar dichas reglas y generar un Sistema de Inferencia Difuso (FIS)
+- Usar esas reglas para predecir el valor y explicar dicha predicción
+- Modificar el código fuente de LIME sustituyendo la función de predicción de regresión lineal por nuestro método de obtención y aplicación de reglas

@@ -12,3 +12,10 @@ Proyectos
 Como generar datos de entrada:
 
 https://gemini.google.com/app/d56eebe59b226fb1 
+
+PDF interpretable Machine learning:
+https://originalstatic.aminer.cn/misc/pdf/Molnar-interpretable-machine-learning_compressed.pdf
+
+Nvidia Cosmos:
+https://github.com/nvidia-cosmos
+https://github.com/nvidia-cosmos/cosmos-reason2
