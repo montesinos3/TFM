@@ -11,3 +11,37 @@ Como siguientes pasos a realizar serían:
 - Fuzzificar dichas reglas y generar un Sistema de Inferencia Difuso (FIS)
 - Usar esas reglas para predecir el valor y explicar dicha predicción
 - Modificar el código fuente de LIME sustituyendo la función de predicción de regresión lineal por nuestro método de obtención y aplicación de reglas
+
+El paso de la linea 9 seguro q sería con test o tendría que hacerse con el train? osea entiendo q es test xq el explicador ya viene entrenado con el train, pero claro, cuando usemos este metodo de fuzzificación y reglas para usarlo como predictor realmente eso se haría con el train para generar las reglas y luego como predictor usaríamos dichas reglas, no?.
+
+Respuesta de Gemini:
+
+¡No te estás liando en absoluto! De hecho, tienes una intuición analítica excelente y acabas de dar en el clavo con uno de los conceptos más importantes del Machine Learning: la separación estricta entre lo que el modelo "conoce" y lo que el modelo "evalúa".
+
+Para aclarar esto, hay que diferenciar cómo funciona el **LIME local estándar** y cómo funcionará tu **Fuzzy-LIME global**.
+
+### 1. Cómo funciona el LIME original (Local)
+Cuando inicializas el explicador original (`LimeTabularExplainer`), le pasas el **conjunto de entrenamiento (Train)**. Sin embargo, LIME **no entrena ningún modelo lineal ahí**. Solo usa esos datos para calcular estadísticas (medias, desviaciones típicas, frecuencias de variables categóricas). LIME necesita saber cómo es tu conjunto de entrenamiento para que, cuando tenga que inventarse los 5000 puntos falsos más adelante, sean puntos "realistas".
+
+La regresión lineal de LIME se entrena **sobre la marcha** en el momento de la predicción. Cuando le pides explicar una instancia del test, LIME genera los 5000 puntos, le pregunta al Random Forest, y entrena la regresión lineal *solo para esa instancia del test*.
+
+### 2. Cómo debe funcionar tu Fuzzy-LIME (Global)
+Aquí es donde tu pregunta es metodológicamente perfecta para tu TFM. Si tu objetivo es crear un explicador **global**, tu razonamiento es el correcto: **el "Mega-Bucle" que acabamos de hacer debería ejecutarse sobre el conjunto de Entrenamiento (Train), no sobre el Test.**
+
+Si construimos el vocabulario difuso (los percentiles para BAJO, MEDIO, ALTO) mirando el conjunto de Test, estaríamos cometiendo *Data Leakage* (fuga de información). En un entorno real, el explicador no conoce los datos futuros.
+
+Por tanto, la arquitectura de tu herramienta final debería ser exactamente así:
+
+* **Fase de "Entrenamiento" del Explicador (usando `X_train`):**
+    1. Ejecutas el Mega-Bucle sobre una muestra grande de tu conjunto de **Train**.
+    2. Extraes los cortes y defines el diccionario de funciones de pertenencia (BAJO, MEDIO, ALTO) basándote *solo* en la estadística del Train.
+    3. Extraes el "Banco de Reglas Difusas" global que representa cómo se comporta el Random Forest en general.
+
+* **Fase de Explicación (usando `X_test`):**
+    Cuando llega una instancia nueva de Test que quieres explicar, ya no necesitas recalcular el vocabulario. Tienes dos opciones:
+    1. O bien usas tu Banco de Reglas Global para ver qué regla se activa para esa instancia.
+    2. O bien le aplicas LIME local a esa instancia, sacas su árbol local, y lo traduces al texto usando el vocabulario que aprendiste en la fase de Train.
+
+**En resumen:** En el código que hemos estado haciendo en el cuaderno he usado `X_test` simplemente por comodidad (suele ser más pequeño y se ejecuta más rápido para hacer pruebas), pero para el rigor científico de tu tesis, **tienes toda la razón**: la extracción masiva de reglas y la construcción del vocabulario difuso deben hacerse alimentando el pipeline con tu conjunto de `X_train`.
+
+¿Tiene sentido esta distinción? Si lo ves claro, podemos ejecutar el Mega-Bucle (cambiando `X_test` por `X_train` si prefieres hacerlo ya metodológicamente perfecto) para ver qué reglas te devuelve.
