@@ -1,0 +1,14 @@
+- Quitar la parte del pdf de Fuzzy pero dejas a partir de sistemas de inferencia. (Quitar 2 paginas, desde el final de la 7 hasta la 9).
+
+- Incluir lo de IEEE.
+- Comparar FuzzyLime con el LIME que tengo ya ejecutado con mis datos.
+- Hacer esta implementación: EL MODELO A EXPLICAR ES EL QUE SEA: LIME CON SU MODELO LINEAL ORIGINAL Y SU RANKING DE VARIABLES PERO CON CON NÚMEROS.
+- Si sobra tiempo y espacio ejecutar con otros datos.
+
+- Probar a generar los datos con algun otro metodo q no sea un polinomio, sino la tangente o el logaritmo de algo o alguna otra manera. 2^x4+3*x3
+
+- En el estado del arte meter IEEE
+
+Darle la vuelta tanto al estado del arte como a la teoria (primero poner la XAI y luego lo fuzzy)
+
+En la metodología poner un apartado donde expliquemos como ejecutamos la herramienta y obtenemos los resultados para poder dar respuesta a la pregunta del título.
