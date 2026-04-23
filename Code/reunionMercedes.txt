@@ -1,6 +1,6 @@
-✅ - Quitar la parte del pdf de Fuzzy pero dejas a partir de sistemas de inferencia. (Quitar 2 paginas, desde el final de la 7 hasta la 9). 
+✅ Quitar la parte del pdf de Fuzzy pero dejas a partir de sistemas de inferencia. (Quitar 2 paginas, desde el final de la 7 hasta la 9). 
 
-- Comparar FuzzyLime con el LIME que tengo ya ejecutado con mis datos.
+✅ Comparar FuzzyLime con el LIME que tengo ya ejecutado con mis datos.
 - Hacer esta implementación: EL MODELO A EXPLICAR ES EL QUE SEA: LIME CON SU MODELO LINEAL ORIGINAL Y SU RANKING DE VARIABLES PERO CON CON NÚMEROS.
 - Si sobra tiempo y espacio ejecutar con otros datos.
 
