@@ -1,7 +1,7 @@
 ✅ Quitar la parte del pdf de Fuzzy pero dejas a partir de sistemas de inferencia. (Quitar 2 paginas, desde el final de la 7 hasta la 9). 
 
 ✅ Comparar FuzzyLime con el LIME que tengo ya ejecutado con mis datos.
-- Hacer esta implementación: EL MODELO A EXPLICAR ES EL QUE SEA: LIME CON SU MODELO LINEAL ORIGINAL Y SU RANKING DE VARIABLES PERO CON CON NÚMEROS.
+- Hacer esta implementación: EL MODELO A EXPLICAR ES EL QUE SEA: LIME CON SU MODELO LINEAL ORIGINAL Y SU RANKING DE VARIABLES PERO CON CON NÚMEROS DIFUSOS Y COMPARACION DIFUSA.
 - Si sobra tiempo y espacio ejecutar con otros datos.
 
 - Probar a generar los datos con algun otro metodo q no sea un polinomio, sino la tangente o el logaritmo de algo o alguna otra manera. 2^x4+3*x3
