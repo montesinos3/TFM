@@ -11,3 +11,29 @@
 ✅ Darle la vuelta tanto al estado del arte como a la teoria (primero poner la XAI y luego lo fuzzy)
 
 ✅ En la metodología poner un apartado donde expliquemos como ejecutamos la herramienta y obtenemos los resultados para poder dar respuesta a la pregunta del título.
+
+------------------------
+
+✅ Ver si lo que he hecho está bien -> si pero tengo que hacer la gausiana aproximando los clusters cuando están proyectados al eje x y además hacerlo con una nueva explicación, no con la media de todas.
+
+
+
+Explicarle lo de FCM en la 1ª parte para ver si tiene sentido -> técnicas de reducción de la estructura (Tesis de Mercedes)
+
+
+1er enfoque llamarlo Lingüistic LIME
+
+Lo que estamos haciendo es una prueba de concepto
+
+substracted clustering (página 95 tesis mercedes)
+
+✅ fuzzySPLIME
+
+simbiosis es apoyo mutuo
+
+Mirar substracted clustering, mirar como decide SP-LIME las instancias más representativas, en la tesis ver todo lo de reducción de reglas difusas.
+
+Sacar cuantas reuniones hemos tenido
+
+✅ Fuzzy c-means para SP-LIME
+substracted clustering para SP-LIME
