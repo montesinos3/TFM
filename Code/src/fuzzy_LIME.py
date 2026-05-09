@@ -66,7 +66,7 @@ class FuzzyLimeExplainer:
     Encapsula extracción, traducción, clustering e inferencia Mamdani.
     """
     def __init__(self, predict_fn, training_data, feature_names=None, mode='regression', 
-                 max_depth=3, num_clusters=None, num_instancias_a_procesar=None, random_state=1234):
+                 max_depth=3, min_soporte=0, num_instancias_a_procesar=None, random_state=1234):
         """
         Parámetros:
         - predict_fn: Función de predicción del modelo caja negra (ej: rf.predict).
@@ -74,7 +74,7 @@ class FuzzyLimeExplainer:
         - feature_names: Lista de nombres de las variables (si training_data es DataFrame, se pueden inferir, si no, se generan nombres por defecto).
         - mode: 'regression' o 'classification' (LIME lo necesita para saber cómo generar el vecindario). En nuestro caso de momento solo hemos implementado para regresión, pero se podría adaptar a clasificación.
         - max_depth: Profundidad máxima para los árboles rígidos locales (fase de extracción).
-        - num_clusters: Número de reglas maestras a generar en la fase de clustering.
+        - min_soporte: Soporte mínimo para que una regla sea considerada en el modelo final.
         - num_instancias_a_procesar: Cuántas instancias del training_data usar para la extracción masiva (fase 1). Si None, se usan todas.
         """
         # GESTIÓN INTELIGENTE DE DATOS Y NOMBRES DE VARIABLES
@@ -91,7 +91,7 @@ class FuzzyLimeExplainer:
         self.mode = mode
         
         self.max_depth = max_depth
-        self.num_clusters = num_clusters
+        self.min_soporte = min_soporte
         self.num_instancias = num_instancias_a_procesar if num_instancias_a_procesar else len(training_data)
         self.random_state = random_state
 
@@ -214,50 +214,26 @@ class FuzzyLimeExplainer:
         df_global_sin_conflictos = df_frecuencias.sort_values(by='Frecuencia', ascending=False).drop_duplicates(subset=['Condicion'], keep='first')
 
         # --- FASE 5: Fuzzy C-Means Clustering ---
-        if self.num_clusters is not None and len(df_global_sin_conflictos) > self.num_clusters:
-            etiquetas_ordenadas = ['MUY BAJA', 'BAJA', 'MEDIA', 'ALTA', 'MUY ALTA']
-            etiquetas_var = ['MUY BAJO', 'BAJO', 'MEDIO', 'ALTO', 'MUY ALTO']
-            mapa_var_a_num = {etiqueta: i+1 for i, etiqueta in enumerate(etiquetas_var)}
-            mapa_num_a_var = {i+1: etiqueta for i, etiqueta in enumerate(etiquetas_var)}
-            mapa_pred_a_num = {etiqueta: i+1 for i, etiqueta in enumerate(etiquetas_ordenadas)}
-            mapa_num_a_pred = {i+1: etiqueta for i, etiqueta in enumerate(etiquetas_ordenadas)}
-            
-            variables_activas = list(self.vocabulario_entrada.keys())
-            matriz_vectores = []
-            
-            for _, row in df_global_sin_conflictos.iterrows():
-                vector = {var: 3 for var in variables_activas}
-                for parte in row['Condicion'].split(" Y "):
-                    var_nombre, _, etiqueta = parte.partition(" es ")
-                    if var_nombre in vector:
-                        vector[var_nombre] = mapa_var_a_num.get(etiqueta, 3)
-                vector['Prediccion'] = mapa_pred_a_num.get(row['Prediccion_Linguistica'], 3)
-                for _ in range(row['Frecuencia']):
-                    matriz_vectores.append(list(vector.values()))
-                    
-            datos_cluster = np.array(matriz_vectores).T 
-            num_centros = self.num_clusters
-            
-            if num_centros > 1:
-                centroides, _, _, _, _, _, _ = fuzz.cluster.cmeans(
-                    datos_cluster, c=num_centros, m=2, error=0.005, maxiter=1000, init=None
-                )
-                reglas_finales_cluster = []
-                for i, centroide in enumerate(centroides):
-                    cond_texto = []
-                    for j, var in enumerate(variables_activas):
-                        valor_num = int(round(max(1, min(5, centroide[j]))))
-                        cond_texto.append(f"{var} es {mapa_num_a_var[valor_num]}")
-                    pred_num = int(round(max(1, min(5, centroide[-1]))))
-                    
-                    reglas_finales_cluster.append({
-                        'Regla_Maestra': f"Centroide {i+1}",
-                        'Condicion': " Y ".join(cond_texto),
-                        'Prediccion_Linguistica': mapa_num_a_pred[pred_num]
-                    })
-                self.modelo_global_difuso = pd.DataFrame(reglas_finales_cluster).drop_duplicates(subset=['Condicion'])
-            else:
-                self.modelo_global_difuso = df_global_sin_conflictos
+        if self.min_soporte is not 0:
+            total_instancias = df_global_sin_conflictos['Frecuencia'].sum()
+            print(f"Total de instancias cubiertas por las reglas base: {total_instancias}")
+
+            # 2. Calculamos el Soporte (peso real) de cada regla en el modelo
+            df_mamdani = df_global_sin_conflictos.copy()
+            df_mamdani['Soporte'] = df_mamdani['Frecuencia'] / total_instancias
+
+            # 3. Aplicamos la Poda Mamdani (Filtramos las reglas robustas)
+            df_modelo_final = df_mamdani[df_mamdani['Soporte'] >= self.min_soporte].copy()
+
+            # 4. Ordenamos de mayor a menor importancia para facilitar la lectura humana
+            df_modelo_final = df_modelo_final.sort_values(by='Frecuencia', ascending=False).reset_index(drop=True)
+
+            # 5. Formateamos visualmente para la tabla de salida
+            df_modelo_final['Soporte_Porcentaje'] = (df_modelo_final['Soporte'] * 100).apply(lambda x: f"{x:.2f}%")
+            self.modelo_global_difuso = df_modelo_final
+            print(f"\n¡Poda completada con éxito!")
+            print(f"Reglas originales extraídas de LIME: {len(df_global_sin_conflictos)}")
+            print(f"Reglas supervivientes para el motor Mamdani: {len(df_modelo_final)}\n")
         else:
             self.modelo_global_difuso = df_global_sin_conflictos
 
