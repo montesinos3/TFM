@@ -9,10 +9,6 @@ Proyectos
 - https://github.com/marcotcr/lime-experiments
 
 
-Como generar datos de entrada:
-
-https://gemini.google.com/app/d56eebe59b226fb1 
-
 PDF interpretable Machine learning:
 https://originalstatic.aminer.cn/misc/pdf/Molnar-interpretable-machine-learning_compressed.pdf
 
