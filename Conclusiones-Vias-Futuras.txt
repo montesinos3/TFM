@@ -1,0 +1,7 @@
+explicar que es modelo subrogado
+
+anfis es una red neuronal neuroadaptativa que genera un FIS
+
+no voy a explicar que es soft computing
+
+meter lo de la tabla de los tipos de lime en las conclusiones
